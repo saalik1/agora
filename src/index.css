@@ -1,0 +1,177 @@
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/jetbrains-mono';
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Agora token system — dark-first, functional colour.
+
+   Colour carries meaning, never decoration. One saturated triad does double
+   duty: lesson difficulty (easy / medium / hard) and argument verdict
+   (valid / contested / invalid). Teal is the only accent; everything else is
+   greyscale so the triad and the accent stay legible.
+--------------------------------------------------------------------------- */
+
+@theme {
+  --font-sans: 'Geist Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', monospace;
+
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-lg: 1.0625rem;
+  --text-xl: 1.3125rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.375rem;
+
+  --radius-card: 0.625rem;
+}
+
+@layer base {
+  :root {
+    /* Dark is the default, not an afterthought. */
+    --c-bg: #0b0f14;
+    --c-surface: #131a22;
+    --c-raised: #1a232d;
+    --c-border: #263140;
+    --c-border-strong: #35455a;
+    --c-text: #e3e9ef;
+    --c-text-muted: #8a96a4;
+    --c-text-faint: #5d6875;
+
+    --c-accent: #20c4b0;
+    --c-accent-hover: #35d6c2;
+    --c-accent-wash: rgba(32, 196, 176, 0.12);
+
+    --c-easy: #3fbf6f;
+    --c-easy-wash: rgba(63, 191, 111, 0.13);
+    --c-medium: #e0a32e;
+    --c-medium-wash: rgba(224, 163, 46, 0.13);
+    --c-hard: #f0564a;
+    --c-hard-wash: rgba(240, 86, 74, 0.13);
+
+    --c-shadow: rgba(0, 0, 0, 0.5);
+  }
+
+  :root.light {
+    --c-bg: #ffffff;
+    --c-surface: #f5f7f9;
+    --c-raised: #eceff3;
+    --c-border: #dde3e9;
+    --c-border-strong: #bcc6d1;
+    --c-text: #0b0f14;
+    --c-text-muted: #5b6672;
+    --c-text-faint: #7b8794;
+
+    --c-accent: #0d8577;
+    --c-accent-hover: #0a6d61;
+    --c-accent-wash: rgba(13, 133, 119, 0.1);
+
+    --c-easy: #1c8f4d;
+    --c-easy-wash: rgba(28, 143, 77, 0.1);
+    --c-medium: #a1700c;
+    --c-medium-wash: rgba(161, 112, 12, 0.1);
+    --c-hard: #c53a2e;
+    --c-hard-wash: rgba(197, 58, 46, 0.1);
+
+    --c-shadow: rgba(11, 15, 20, 0.08);
+  }
+
+  * {
+    border-color: var(--c-border);
+  }
+
+  html {
+    background-color: var(--c-bg);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--c-bg);
+    color: var(--c-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Numerals line up in tables, proof lines, and XP counters. */
+  .font-mono,
+  code,
+  kbd {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'zero' 1;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  ::selection {
+    background: var(--c-accent-wash);
+    color: var(--c-text);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Set by the settings store when the user forces reduced motion. */
+  :root.reduce-motion *,
+  :root.reduce-motion *::before,
+  :root.reduce-motion *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@utility bg-app {
+  background-color: var(--c-bg);
+}
+@utility bg-surface {
+  background-color: var(--c-surface);
+}
+@utility bg-raised {
+  background-color: var(--c-raised);
+}
+@utility text-ink {
+  color: var(--c-text);
+}
+@utility text-muted {
+  color: var(--c-text-muted);
+}
+@utility text-faint {
+  color: var(--c-text-faint);
+}
+@utility text-accent {
+  color: var(--c-accent);
+}
+@utility bg-accent {
+  background-color: var(--c-accent);
+}
+@utility border-subtle {
+  border-color: var(--c-border);
+}
+@utility border-strong {
+  border-color: var(--c-border-strong);
+}
+
+/* The signature element: a proof column. A vertical rule marks the scope of an
+   assumption, exactly as it does in a Fitch-style natural deduction proof. */
+@utility proof-rule {
+  border-left: 1px solid var(--c-border-strong);
+}
+@utility proof-rule-active {
+  border-left: 1px solid var(--c-accent);
+}
