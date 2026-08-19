@@ -6,7 +6,7 @@ Agora teaches reasoning the way it's actually done — reconstructing arguments,
 premise doing the hidden work, and locating exactly where an objection bites. Not by
 memorising which school of thought says what.
 
-**V1 covers Logic & Argumentation: 17 lessons, 68 exercises, 27 concepts, 14 argument cards.**
+**53 lessons · 214 exercises · 93 concepts · 44 argument cards · 4 subjects**
 
 It runs entirely in your browser. No account, no server, no subscription, nothing to pay
 for. Your progress stays on your device and you can export it to a file whenever you want.
@@ -21,28 +21,39 @@ npm run dev
 Open the printed URL. That's the whole setup — there's nothing to configure.
 
 ```bash
-npm run test     # 145 tests
+npm run test     # 183 tests
 npm run lint
 npm run build    # static output in /dist
 ```
 
-## The course
+## The curriculum
 
-**Unit 1 — Argument Basics**
-What an argument is · premises and conclusions · deductive vs inductive · validity ·
-soundness · necessary and sufficient conditions
+Subjects build on one another. Logic supplies the tools, Epistemology and Metaphysics
+supply the machinery, and Philosophy of Religion applies both.
 
-**Unit 2 — Argument Forms**
-Modus ponens · modus tollens · affirming the consequent · denying the antecedent ·
-reductio ad absurdum
+**Logic & Argumentation** (17 lessons)
+Argument basics · the four conditional forms and reductio · counterexamples, hidden
+premises, charity and burden of proof, and six fallacies grouped by *why* the reasoning
+fails.
 
-The two invalid forms sit directly beside the valid ones they imitate, because that
-adjacency is the only thing that makes the difference visible.
+**Epistemology** (14 lessons)
+What knowledge is: JTB, Gettier, the regress problem, foundationalism and coherentism,
+internalism and externalism · sources: a priori and a posteriori, rationalism and
+empiricism, testimony, the problem of induction · scepticism: Cartesian doubt, the dream
+argument, brain in a vat, and the four standard responses.
 
-**Unit 3 — Argument Analysis**
-Counterexamples · hidden premises · charity and burden of proof · then three fallacy
-lessons grouped by *why* the reasoning fails: attacking the wrong target, smuggling the
-conclusion in, and forcing a false structure.
+**Metaphysics** (14 lessons)
+Modality and the Principle of Sufficient Reason · essence, existence and universals ·
+identity, the Ship of Theseus, endurantism and perdurantism · causation, actual infinity
+and the theories of time · determinism and free will.
+
+**Philosophy of Religion** (8 lessons)
+The Kalam and contingency arguments, fine-tuning, the ontological argument · omnipotence
+and omniscience, both problems of evil, theodicies and defences, divine hiddenness.
+
+Arguments are presented as arguments — premises, support, objections, responses, and
+counter-responses. Agora does not tell you which side wins, and a test enforces that every
+argument card in Philosophy of Religion is marked contested.
 
 ## How it works
 
@@ -52,16 +63,15 @@ confusion behind it rather than just marking you down.
 
 **Mastery** is tracked per concept as an exponential moving average, weighted towards
 recent performance — so a concept you understood last week but just got wrong will drop,
-and come back. Because mastery keys off concepts rather than lessons, later units move the
-same scores as earlier ones.
+and come back. Because mastery keys off concepts rather than lessons, later subjects move
+the same scores as earlier ones.
 
 **Practice** picks its own questions, prioritising concepts you answered incorrectly,
 concepts you haven't seen in a while, and concepts you've met in a lesson but never
 practised.
 
-**The library** holds every argument, laid out with its premises, the support for each, the
-objections that target them, and the responses to those objections. Arguments are presented
-as arguments — Agora doesn't tell you which side wins.
+**The library** holds every concept and argument, searchable, with mastery indicators
+showing what you've reviewed at a glance.
 
 ## Design
 
@@ -71,8 +81,8 @@ conclusion under a turnstile. Expanding a premise indents one level and grows it
 vertical rule, so objections nest inside the premise they attack and responses inside the
 objection. **That indentation is the argument map** — no separate graph view is needed.
 
-Colour is functional. One saturated triad carries both lesson difficulty and argument
-verdict, so green, amber and red always mean the same thing wherever they appear.
+Colour is functional. One saturated triad carries lesson difficulty, argument verdict and
+mastery band, so green, amber and red always mean the same thing wherever they appear.
 
 ## Progress and privacy
 
@@ -88,13 +98,14 @@ erase your progress, so export if you care about it.
 ```
 src/
   content/    typed lesson, concept and argument data — no prose lives in components
+    logic/  epistemology/  metaphysics/  religion/
   engine/     XP, levels, mastery, streaks, spaced review — pure functions, no React
   store/      repository interface + localStorage implementation + Zustand
   components/ layout, lesson, exercise, argument, ui
   pages/      Home, Learn, Lesson, Practice, Library, Progress, Settings
 ```
 
-Three rules hold the thing together:
+Four rules hold the thing together:
 
 1. **No philosophical prose in components.** All content is typed data under `content/`.
 2. **All game rules live in `engine/` as pure functions** that take the current date as a
@@ -102,13 +113,14 @@ Three rules hold the thing together:
    tomorrow.
 3. **All persistence goes through `ProgressRepository`.** Swapping localStorage for
    IndexedDB or a real backend means writing one file.
+4. **Lesson gating is scoped per subject.** Order is enforced within a subject; any
+   subject can be started immediately.
 
-A dev-time integrity check validates every id reference at startup, because a mistyped
-`conceptId` would otherwise silently drop a concept out of the review rotation with no
-error anywhere.
-
-Adding subjects — Epistemology, Metaphysics, Philosophy of Religion — means writing content
-files, not touching the UI.
+Two test suites guard the content. An integrity check validates every id reference, since a
+mistyped `conceptId` would otherwise silently drop a concept out of the review rotation. A
+quality floor enforces that every distractor explains itself, every lesson has a
+misconception section, and every substantive argument card carries an objection tree — the
+failure modes no compiler can detect.
 
 ## Deploy
 

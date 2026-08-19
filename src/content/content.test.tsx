@@ -161,3 +161,59 @@ describe('lesson flow', () => {
     expect(mastery[first.conceptIds[0]!]!.score).toBeLessThan(60)
   })
 })
+
+describe('lesson navigation', () => {
+  beforeEach(() => {
+    useProgress.setState({
+      progress: createEmptyProgress(),
+      hydrated: false,
+      pendingAchievements: [],
+    })
+    setProgressRepository(new MemoryProgressRepository())
+  })
+
+  it('starts a new lesson fresh rather than showing the previous completion screen', async () => {
+    const user = userEvent.setup()
+    window.location.hash = '#/learn/lesson/logic-1'
+    render(
+      <HashRouter>
+        <App />
+      </HashRouter>,
+    )
+
+    await waitFor(() => screen.getByRole('button', { name: /Start exercises/ }))
+    await user.click(screen.getByRole('button', { name: /Start exercises/ }))
+
+    for (const exercise of exercisesOfLesson('logic-1')) {
+      if (exercise.type === 'choice') {
+        await user.click(screen.getByText(exercise.options.find((o) => o.id === exercise.correctId)!.text))
+      } else {
+        for (const statement of exercise.statements) {
+          const group = screen.getByRole('radiogroup', { name: `Role of: ${statement.text}` })
+          const label =
+            statement.role === 'premise'
+              ? 'Premise'
+              : statement.role === 'conclusion'
+                ? 'Conclusion'
+                : 'Neither'
+          await user.click(within(group).getByRole('radio', { name: label }))
+        }
+      }
+      await user.click(screen.getByRole('button', { name: 'Check' }))
+      await user.click(screen.getByRole('button', { name: /Next|Finish lesson/ }))
+    }
+
+    await waitFor(() => expect(screen.getByText('Lesson complete')).toBeInTheDocument())
+
+    // Navigating to the next lesson must reset the flow, not carry state over.
+    await user.click(screen.getByRole('link', { name: 'Next lesson' }))
+
+    await waitFor(() =>
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+        'Premises and conclusions',
+      ),
+    )
+    expect(screen.queryByText('Lesson complete')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Start exercises/ })).toBeInTheDocument()
+  })
+})

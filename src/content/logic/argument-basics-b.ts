@@ -792,7 +792,9 @@ export const argumentBasicsExercisesB: Exercise[] = [
       {
         id: 'b',
         text: 'Madrid is a European capital.',
-        explanation: 'True, so it cannot be the source of the unsoundness.',
+        explanation:
+          'Madrid is indeed a European capital, so this premise is true and cannot be what makes ' +
+          'the argument unsound. Look to the universal claim instead.',
       },
       {
         id: 'c',

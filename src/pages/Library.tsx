@@ -5,7 +5,7 @@ import { masteryBand } from '@/engine/mastery'
 import { cn } from '@/lib/cn'
 import { search } from '@/lib/search'
 import { useProgress } from '@/store/use-progress'
-import { Card, PageHeader } from '@/components/ui'
+import { Card, MasteryDot, PageHeader } from '@/components/ui'
 
 type Tab = 'concepts' | 'arguments'
 
@@ -113,7 +113,15 @@ export function Library() {
           </div>
 
           {tab === 'concepts' ? (
-            <Card className="divide-y">
+            <>
+              <p className="mb-2 font-mono text-2xs text-faint">
+                <span aria-hidden>○</span> not started ·{' '}
+                <span aria-hidden style={{ color: 'var(--c-hard)' }}>●</span> learning ·{' '}
+                <span aria-hidden style={{ color: 'var(--c-medium)' }}>●</span> developing ·{' '}
+                <span aria-hidden style={{ color: 'var(--c-accent)' }}>●</span> proficient ·{' '}
+                <span aria-hidden style={{ color: 'var(--c-easy)' }}>✓</span> mastered
+              </p>
+              <Card className="divide-y">
               {sortedConcepts.map((concept) => {
                 const record = mastery[concept.id]
                 const band = record ? masteryBand(record.score) : null
@@ -124,17 +132,21 @@ export function Library() {
                     to={`/library/concept/${concept.id}`}
                     className="block px-4 py-3 transition-colors hover:bg-raised"
                   >
-                    <div className="flex items-baseline justify-between gap-3">
-                      <span className="truncate text-ink">{concept.term}</span>
-                      {band && (
-                        <span className="shrink-0 font-mono text-2xs text-faint">{band.label}</span>
-                      )}
+                    <div className="flex items-baseline gap-3">
+                      <span className="shrink-0">
+                        <MasteryDot score={record ? record.score : null} />
+                      </span>
+                      <span className="min-w-0 flex-1 truncate text-ink">{concept.term}</span>
+                      <span className="shrink-0 font-mono text-2xs text-faint">
+                        {band ? band.label : 'Not started'}
+                      </span>
                     </div>
-                    <p className="mt-0.5 text-sm text-muted">{concept.short}</p>
+                    <p className="mt-0.5 pl-7 text-sm text-muted">{concept.short}</p>
                   </Link>
                 )
               })}
-            </Card>
+              </Card>
+            </>
           ) : (
             <>
               <div className="mb-3 flex flex-wrap gap-1.5">

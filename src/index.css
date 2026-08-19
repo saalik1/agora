@@ -93,7 +93,9 @@
     font-family: var(--font-sans);
     font-size: var(--text-base);
     line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
+    /* No -webkit-font-smoothing: antialiased here. It thins strokes noticeably
+       on macOS, and light-on-dark text already reads lighter than it measures.
+       Subpixel rendering (the browser default) keeps Geist at its true weight. */
     text-rendering: optimizeLegibility;
   }
 

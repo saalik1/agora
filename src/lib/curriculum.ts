@@ -3,6 +3,7 @@ import {
   lessonsOfUnit,
   orderedLessons,
   subjects,
+  units,
   unitsOfSubject,
 } from '@/content'
 import type { Lesson, LessonId, Unit } from '@/types/content'
@@ -47,8 +48,11 @@ export interface UnitProgress {
 }
 
 /** Per-unit progress for the current subject, for dashboard mastery bars. */
-export function unitProgress(completed: Record<LessonId, unknown>): UnitProgress[] {
-  const subject = subjects[0]
+export function unitProgress(
+  completed: Record<LessonId, unknown>,
+  subjectId?: string,
+): UnitProgress[] {
+  const subject = subjectId ? subjects.find((s) => s.id === subjectId) : subjects[0]
   if (!subject) return []
 
   return unitsOfSubject(subject.id).map((unit) => {
@@ -68,7 +72,28 @@ export function lessonLocation(lessonId: LessonId): string | null {
   if (!lesson) return null
   const siblings = lessonsOfUnit(lesson.unitId)
   const position = siblings.findIndex((l) => l.id === lessonId)
-  const unit = unitsOfSubject(subjects[0]?.id ?? '').find((u) => u.id === lesson.unitId)
+  const unit = units.find((u) => u.id === lesson.unitId)
   if (!unit || position < 0) return null
   return `${unit.title} · Lesson ${position + 1}`
+}
+
+
+/** Lesson ids of one subject, in curriculum order. */
+export function lessonIdsOfSubject(subjectId: string): LessonId[] {
+  return unitsOfSubject(subjectId).flatMap((unit) =>
+    lessonsOfUnit(unit.id).map((lesson) => lesson.id),
+  )
+}
+
+/**
+ * Gating runs within a subject rather than across the whole curriculum: a new
+ * subject should be startable immediately, not locked behind every lesson of
+ * the one before it. Order within a subject is still enforced.
+ */
+export function unlockOrderFor(lessonId: LessonId): LessonId[] {
+  const lesson = getLesson(lessonId)
+  if (!lesson) return []
+  const unit = units.find((u) => u.id === lesson.unitId)
+  if (!unit) return []
+  return lessonIdsOfSubject(unit.subjectId)
 }

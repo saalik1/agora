@@ -7,6 +7,7 @@ import { dailyGoalState } from '@/engine/xp'
 import { buildReviewSet } from '@/engine/review'
 import { reviewPool } from '@/content'
 import { isCourseComplete, lessonLocation, nextLessonFor, unitProgress } from '@/lib/curriculum'
+import { subjects } from '@/content'
 import { toDayStamp } from '@/lib/date'
 import { useLevel, useProgress } from '@/store/use-progress'
 import { Button, Card, DifficultyPill, MasteryBar } from '@/components/ui'
@@ -34,7 +35,11 @@ export function Home() {
 
   const nextLesson = nextLessonFor(progress.lessons)
   const finished = isCourseComplete(progress.lessons)
-  const units = unitProgress(progress.lessons)
+  // Every subject, not just the first — otherwise a second subject's mastery
+  // silently never appears on the dashboard.
+  const subjectSections = subjects
+    .map((subject) => ({ subject, units: unitProgress(progress.lessons, subject.id) }))
+    .filter((section) => section.units.length > 0)
 
   const reviewReady = buildReviewSet(
     selectReviewConcepts(progress.mastery, today, 10),
@@ -152,22 +157,31 @@ export function Home() {
         </Card>
       )}
 
-      {units.length > 0 && (
+      {subjectSections.length > 0 && (
         <section className="mb-8">
           <h2 className="mb-3 text-sm font-medium text-ink">Mastery</h2>
-          <Card className="space-y-4 px-4 py-4">
-            {units.map(({ unit, lessons, completedCount, conceptIds }) => (
-              <div key={unit.id}>
-                <MasteryBar
-                  score={aggregateMastery(progress.mastery, conceptIds)}
-                  label={unit.title}
-                />
-                <p className="mt-1 font-mono text-2xs text-faint">
-                  {completedCount} of {lessons.length} lessons
+          <div className="space-y-4">
+            {subjectSections.map(({ subject, units }) => (
+              <Card key={subject.id} className="px-4 py-4">
+                <p className="mb-3 font-mono text-2xs uppercase tracking-[0.14em] text-faint">
+                  {subject.title}
                 </p>
-              </div>
+                <div className="space-y-4">
+                  {units.map(({ unit, lessons, completedCount, conceptIds }) => (
+                    <div key={unit.id}>
+                      <MasteryBar
+                        score={aggregateMastery(progress.mastery, conceptIds)}
+                        label={unit.title}
+                      />
+                      <p className="mt-1 font-mono text-2xs text-faint">
+                        {completedCount} of {lessons.length} lessons
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </Card>
             ))}
-          </Card>
+          </div>
         </section>
       )}
 

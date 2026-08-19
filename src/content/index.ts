@@ -11,8 +11,46 @@ import type {
   Unit,
   UnitId,
 } from '@/types/content'
-import { argumentCards } from './arguments'
-import { concepts } from './concepts'
+import { argumentCards as logicArguments } from './arguments'
+import { concepts as logicConcepts } from './concepts'
+import { epistemologyArguments } from './epistemology/arguments'
+import { epistemologyConcepts } from './epistemology/concepts'
+import {
+  epistemologyKnowledgeExercises,
+  epistemologyKnowledgeLessons,
+  epistemologyKnowledgeUnit,
+} from './epistemology/knowledge'
+import { religionArguments } from './religion/arguments'
+import { religionConcepts } from './religion/concepts'
+import {
+  relArgumentsUnit,
+  relProblemsUnit,
+  religionExercises,
+  religionLessons,
+} from './religion/lessons'
+import { metaphysicsArguments } from './metaphysics/arguments'
+import { metaphysicsConcepts } from './metaphysics/concepts'
+import {
+  metaCausationUnit,
+  metaExercisesB,
+  metaFreeWillUnit,
+  metaLessonsB,
+} from './metaphysics/causation-freewill'
+import {
+  metaExercisesA,
+  metaExistenceUnit,
+  metaIdentityUnit,
+  metaLessonsA,
+  metaModalityUnit,
+} from './metaphysics/modality-identity'
+import {
+  epistemologyScepticismExercises,
+  epistemologyScepticismLessons,
+  epistemologyScepticismUnit,
+  epistemologySourcesExercises,
+  epistemologySourcesLessons,
+  epistemologySourcesUnit,
+} from './epistemology/sources-scepticism'
 import {
   argumentBasicsExercises,
   argumentBasicsLessons,
@@ -46,13 +84,86 @@ export const subjects: Subject[] = [
       'Everything else in philosophy depends on this.',
     unitIds: [argumentBasicsUnit.id, argumentFormsUnit.id, argumentAnalysisUnit.id],
   },
+  {
+    id: 'epistemology',
+    title: 'Epistemology',
+    blurb:
+      'What knowledge is, where it comes from, and whether any of it survives scrutiny. ' +
+      'Builds directly on Logic.',
+    unitIds: [
+      epistemologyKnowledgeUnit.id,
+      epistemologySourcesUnit.id,
+      epistemologyScepticismUnit.id,
+    ],
+  },
+  {
+    id: 'metaphysics',
+    title: 'Metaphysics',
+    blurb:
+      'Necessity and contingency, identity and persistence, causation, time, infinity and ' +
+      'free will. Supplies the machinery the cosmological arguments run on.',
+    unitIds: [
+      metaModalityUnit.id,
+      metaExistenceUnit.id,
+      metaIdentityUnit.id,
+      metaCausationUnit.id,
+      metaFreeWillUnit.id,
+    ],
+  },
+  {
+    id: 'religion',
+    title: 'Philosophy of Religion',
+    blurb:
+      'The classical arguments and the strongest objections to them, laid out as arguments. ' +
+      'Applies the machinery from Logic, Epistemology and Metaphysics.',
+    unitIds: [relArgumentsUnit.id, relProblemsUnit.id],
+  },
 ]
 
-export const units: Unit[] = [argumentBasicsUnit, argumentFormsUnit, argumentAnalysisUnit]
-export const lessons: Lesson[] = [...argumentBasicsLessons, ...argumentBasicsLessonsB, ...argumentFormsLessons, ...argumentAnalysisLessons]
-export const exercises: Exercise[] = [...argumentBasicsExercises, ...argumentBasicsExercisesB, ...argumentFormsExercises, ...argumentAnalysisExercises]
+export const units: Unit[] = [
+  argumentBasicsUnit,
+  argumentFormsUnit,
+  argumentAnalysisUnit,
+  epistemologyKnowledgeUnit,
+  epistemologySourcesUnit,
+  epistemologyScepticismUnit,
+  metaModalityUnit,
+  metaExistenceUnit,
+  metaIdentityUnit,
+  metaCausationUnit,
+  metaFreeWillUnit,
+  relArgumentsUnit,
+  relProblemsUnit,
+]
+export const lessons: Lesson[] = [...argumentBasicsLessons, ...argumentBasicsLessonsB, ...argumentFormsLessons, ...argumentAnalysisLessons,
+  ...epistemologyKnowledgeLessons,
+  ...epistemologySourcesLessons,
+  ...epistemologyScepticismLessons,
+  ...metaLessonsA,
+  ...metaLessonsB,
+  ...religionLessons,
+]
+export const exercises: Exercise[] = [...argumentBasicsExercises, ...argumentBasicsExercisesB, ...argumentFormsExercises, ...argumentAnalysisExercises,
+  ...epistemologyKnowledgeExercises,
+  ...epistemologySourcesExercises,
+  ...epistemologyScepticismExercises,
+  ...metaExercisesA,
+  ...metaExercisesB,
+  ...religionExercises,
+]
 
-export { argumentCards, concepts }
+export const argumentCards: Argument[] = [
+  ...logicArguments,
+  ...epistemologyArguments,
+  ...metaphysicsArguments,
+  ...religionArguments,
+]
+export const concepts: Concept[] = [
+  ...logicConcepts,
+  ...epistemologyConcepts,
+  ...metaphysicsConcepts,
+  ...religionConcepts,
+]
 
 const index = <T extends { id: string }>(items: T[]): Map<string, T> =>
   new Map(items.map((item) => [item.id, item]))

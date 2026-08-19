@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useParams } from 'react-router-dom'
 import { Shell } from '@/components/layout/Shell'
 import { useTheme } from '@/lib/use-theme'
 import { selectSettings, useProgress } from '@/store/use-progress'
@@ -12,6 +12,17 @@ import { ArgumentPage, ConceptPage } from '@/pages/LibraryDetail'
 import { ProgressPage } from '@/pages/Progress'
 import { Settings } from '@/pages/Settings'
 import { NotFound } from '@/pages/NotFound'
+
+/**
+ * React Router reuses a component when only the URL parameter changes, so
+ * navigating lesson 1 -> lesson 2 would otherwise keep the previous lesson's
+ * state: you would land on the old completion screen wearing the new lesson's
+ * title. Keying on the id forces a clean remount.
+ */
+function LessonRoute() {
+  const { lessonId } = useParams()
+  return <LessonPage key={lessonId} />
+}
 
 export function App() {
   const hydrate = useProgress((s) => s.hydrate)
@@ -35,7 +46,7 @@ export function App() {
       <Route element={<Shell />}>
         <Route index element={<Home />} />
         <Route path="learn" element={<Learn />} />
-        <Route path="learn/lesson/:lessonId" element={<LessonPage />} />
+        <Route path="learn/lesson/:lessonId" element={<LessonRoute />} />
         <Route path="practice" element={<Practice />} />
         <Route path="library" element={<Library />} />
         <Route path="library/concept/:conceptId" element={<ConceptPage />} />

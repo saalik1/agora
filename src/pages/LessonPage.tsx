@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { exercisesOfLesson, getLesson, orderedLessonIds } from '@/content'
+import { exercisesOfLesson, getLesson } from '@/content'
+import { unlockOrderFor } from '@/lib/curriculum'
 import { lessonScore, masteryDeltas } from '@/engine/mastery'
 import { levelState } from '@/engine/levels'
 import { lessonXp } from '@/engine/xp'
@@ -109,7 +110,9 @@ export function LessonPage() {
   }
 
   if (stage === 'complete' && result) {
-    const order = orderedLessonIds()
+    // Subject-scoped, so finishing a subject's last lesson does not spill into
+    // the next subject as though it were the next lesson.
+    const order = unlockOrderFor(lesson.id)
     const position = order.indexOf(lesson.id)
     const nextLessonId = position >= 0 ? (order[position + 1] ?? null) : null
 

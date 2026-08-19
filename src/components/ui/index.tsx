@@ -117,6 +117,38 @@ const TONE_VAR: Record<string, string> = {
   easy: 'var(--c-easy)',
 }
 
+/**
+ * Compact mastery status for list rows. The glyph changes shape as well as hue,
+ * so the state survives greyscale and colour blindness.
+ *
+ * Decorative by design: every caller renders the band label as visible text
+ * beside it. Giving the dot its own screen-reader text would make assistive
+ * software announce the state twice.
+ */
+export function MasteryDot({ score }: { score: number | null }) {
+  if (score === null) {
+    return (
+      <span
+        aria-hidden
+        className="font-mono text-xs leading-none"
+        style={{ color: 'var(--c-text-faint)' }}
+      >
+        ○
+      </span>
+    )
+  }
+
+  const band = masteryBand(score)
+  const color = TONE_VAR[band.tone] ?? 'var(--c-accent)'
+  const glyph = band.band === 'mastered' ? '✓' : band.band === 'new' ? '◔' : '●'
+
+  return (
+    <span aria-hidden className="font-mono text-xs leading-none" style={{ color }}>
+      {glyph}
+    </span>
+  )
+}
+
 export function MasteryBar({
   score,
   label,

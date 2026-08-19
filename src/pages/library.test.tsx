@@ -142,3 +142,39 @@ describe('concept and argument pages', () => {
     )
   })
 })
+
+describe('mastery indicators in the library', () => {
+  it('marks untouched concepts as not started', async () => {
+    renderAt('#/library')
+    await waitFor(() => screen.getByRole('heading', { level: 1 }))
+
+    // A brand-new user has no mastery records at all.
+    expect(screen.getAllByText('Not started').length).toBe(concepts.length)
+  })
+
+  it('shows the band for concepts the user has practised', async () => {
+    window.location.hash = '#/library'
+    const progress = createEmptyProgress()
+    progress.mastery = {
+      validity: { score: 85, lastReviewed: '2026-08-16', firstSeen: '2026-08-01' },
+      soundness: { score: 25, lastReviewed: '2026-08-16', firstSeen: '2026-08-01' },
+    }
+    useProgress.setState({ progress, hydrated: false, pendingAchievements: [] })
+    const repository = new MemoryProgressRepository()
+    await repository.save(progress)
+    setProgressRepository(repository)
+
+    render(
+      <HashRouter>
+        <App />
+      </HashRouter>,
+    )
+
+    await waitFor(() => screen.getByRole('heading', { level: 1 }))
+
+    // Labels accompany the dots, so the state never depends on colour alone.
+    expect(screen.getByText('Mastered')).toBeInTheDocument()
+    expect(screen.getByText('Learning')).toBeInTheDocument()
+    expect(screen.getAllByText('Not started').length).toBe(concepts.length - 2)
+  })
+})

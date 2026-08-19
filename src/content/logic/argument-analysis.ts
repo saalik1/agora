@@ -704,7 +704,8 @@ export const argumentAnalysisExercises: Exercise[] = [
         id: 'a',
         text: 'Choosing the strongest of several possible readings.',
         explanation:
-          'This is the core of the principle, not an exception to it.',
+          'This is the core of the principle rather than a limit on it. Choosing the strongest ' +
+          'reading is precisely what charity asks you to do.',
       },
       {
         id: 'b',
@@ -1094,7 +1095,8 @@ export const argumentAnalysisExercises: Exercise[] = [
         id: 'd',
         text: 'Either she attended or she did not.',
         explanation:
-          'Genuinely exhaustive — a claim and its denial always are.',
+          'Genuinely exhaustive. A claim and its denial cover every possibility between them, so ' +
+          'presenting exactly two options is accurate here rather than restrictive.',
       },
     ],
     correctId: 'b',
